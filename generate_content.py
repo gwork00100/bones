@@ -27,10 +27,17 @@ def build_prompt():
     src = get_weighted_source()
     return f"Generate trending affiliate content from {src} that maximizes engagement."
 
+def generate_content():
+    """
+    This is the function Render expects.
+    Returns the generated prompt.
+    """
+    return build_prompt()
+
 # ------------------------------
-# MAIN
+# MAIN (optional for local testing)
 # ------------------------------
 if __name__ == "__main__":
-    prompt = build_prompt()
+    prompt = generate_content()
     print("🎯 Generated Prompt:")
     print(prompt)
