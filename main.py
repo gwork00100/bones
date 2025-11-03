@@ -11,16 +11,16 @@ import os
 import time
 import random
 import traceback
+import asyncio
 from datetime import datetime, timezone
 from dotenv import load_dotenv
-import pandas as pd
 
 # ------------------------------
 # Load environment and config
 # ------------------------------
 load_dotenv()
 TREND_KEYWORDS = os.getenv("TREND_KEYWORDS", "python,ai").split(",")
-FETCH_INTERVAL = int(os.getenv("BONES_FETCH_INTERVAL", 600))  # seconds (default 10 min)
+FETCH_INTERVAL = int(os.getenv("BONES_FETCH_INTERVAL", 600))  # default 10 min
 
 # ------------------------------
 # Imports (internal modules)
@@ -82,6 +82,27 @@ def build_prompt(keyword, source, weights):
     return f"Generate content about '{keyword}'. Prioritize insights from {source} with weight {weight:.2f}."
 
 # ============================================================
+# Fetch and save trends concurrently
+# ============================================================
+def fetch_and_save_trends():
+    """Fetch Google and Ollama trends concurrently and save them."""
+    try:
+        google_trends = retry(fetch_google_trends, 3, 5, TREND_KEYWORDS)
+        if not google_trends.empty:
+            save_to_supabase(google_trends, table_name="google_trends")
+            log_heartbeat("success", f"Fetched and saved {len(google_trends)} Google Trends.")
+    except Exception as e:
+        log_heartbeat("error", f"Failed Google Trends after retries: {e}")
+
+    try:
+        ollama_trends = retry(fetch_ollama_trends, 3, 5)
+        if not ollama_trends.empty:
+            save_to_supabase(ollama_trends, table_name="ollama_trends")
+            log_heartbeat("success", f"Fetched and saved {len(ollama_trends)} Ollama Trends.")
+    except Exception as e:
+        log_heartbeat("error", f"Failed Ollama Trends after retries: {e}")
+
+# ============================================================
 # Main processing cycle
 # ============================================================
 def run_cycle():
@@ -98,23 +119,8 @@ def run_cycle():
         weights_dict = {item["source"]: item["weight"] for item in (weights_resp.data or [])}
         sources = ["Twitter", "Google", "Reddit", "Medium"]
 
-        # --- Fetch and save Google Trends ---
-        try:
-            google_trends = retry(fetch_google_trends, 3, 5, TREND_KEYWORDS)
-            if not google_trends.empty:
-                save_to_supabase(google_trends, table_name="google_trends")
-                log_heartbeat("success", f"Fetched and saved {len(google_trends)} Google Trends.")
-        except Exception as e:
-            log_heartbeat("error", f"Failed Google Trends after retries: {e}")
-
-        # --- Fetch and save Ollama Trends ---
-        try:
-            ollama_trends = retry(fetch_ollama_trends, 3, 5)
-            if not ollama_trends.empty:
-                save_to_supabase(ollama_trends, table_name="ollama_trends")
-                log_heartbeat("success", f"Fetched and saved {len(ollama_trends)} Ollama Trends.")
-        except Exception as e:
-            log_heartbeat("error", f"Failed Ollama Trends after retries: {e}")
+        # --- Fetch trends ---
+        fetch_and_save_trends()
 
         # --- Main keyword loop ---
         for kw in keywords:
@@ -136,7 +142,7 @@ def run_cycle():
             source_weights = [weights_dict.get(src, 1.0) for src in sources]
             selected_source = random.choices(sources, weights=source_weights, k=1)[0]
             prompt = build_prompt(kw, selected_source, weights_dict)
-            print(f"📝 Generated prompt: {prompt}")
+            log_heartbeat("info", f"Generated prompt: {prompt}")
 
             # Content Generation
             try:
