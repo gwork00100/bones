@@ -7,3 +7,5 @@ pandas
 tweepy
 pycoingecko
 uvicorn[standard]
+redis
+aioredis
