@@ -1,0 +1,97 @@
+[
+  {
+    "timestamp": "2025-10-24T22:50:02.208573",
+    "status": "success",
+    "message": "Updated weights: {'Reddit': np.float64(0.5), 'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-24T22:52:22.334474",
+    "status": "success",
+    "message": "Updated weights: {'Twitter': np.float64(0.5), 'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-24T22:54:17.729750",
+    "status": "success",
+    "message": "Updated weights: {'Reddit': np.float64(0.5), 'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-24T23:01:01.552646",
+    "status": "success",
+    "message": "Updated weights: {'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-24T23:02:48.880092",
+    "status": "success",
+    "message": "Updated weights: {'Reddit': np.float64(0.5), 'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-24T23:04:05.357630",
+    "status": "success",
+    "message": "Updated weights: {'Medium': np.float64(0.5), 'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-24T23:07:00.356271",
+    "status": "success",
+    "message": "Updated weights: {'Reddit': np.float64(0.5), 'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-25T00:26:50.190942",
+    "status": "success",
+    "message": "Updated weights: {'Twitter': np.float64(0.5), 'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-25T11:17:41.368380",
+    "status": "failure",
+    "message": "Attempt 1 failed: [Errno 8] nodename nor servname provided, or not known"
+  },
+  {
+    "timestamp": "2025-10-25T11:18:11.386009",
+    "status": "failure",
+    "message": "Attempt 2 failed: [Errno 8] nodename nor servname provided, or not known"
+  },
+  {
+    "timestamp": "2025-10-25T11:18:39.599618",
+    "status": "failure",
+    "message": "Attempt 1 failed: [Errno 8] nodename nor servname provided, or not known"
+  },
+  {
+    "timestamp": "2025-10-25T11:19:10.161400",
+    "status": "failure",
+    "message": "Attempt 2 failed: [Errno 8] nodename nor servname provided, or not known"
+  },
+  {
+    "timestamp": "2025-10-25T11:19:40.184328",
+    "status": "failure",
+    "message": "Attempt 3 failed: [Errno 8] nodename nor servname provided, or not known"
+  },
+  {
+    "timestamp": "2025-10-25T11:22:40.624143",
+    "status": "success",
+    "message": "Updated weights: {'Reddit': np.float64(0.5), 'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-25T11:24:41.567704",
+    "status": "success",
+    "message": "Updated weights: {'Google': np.float64(0.5), 'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-25T11:47:29.553310",
+    "status": "success",
+    "message": "Updated weights: {'LinkedIn': np.float64(1.5)}"
+  },
+  {
+    "timestamp": "2025-10-25T12:16:33.831792",
+    "status": "failure",
+    "message": "Attempt 1 failed: [Errno 8] nodename nor servname provided, or not known"
+  },
+  {
+    "timestamp": "2025-10-25T12:17:33.854997",
+    "status": "failure",
+    "message": "Attempt 2 failed: [Errno 8] nodename nor servname provided, or not known"
+  },
+  {
+    "timestamp": "2025-10-25T12:18:03.887042",
+    "status": "failure",
+    "message": "Attempt 3 failed: [Errno 8] nodename nor servname provided, or not known"
+  }
+]

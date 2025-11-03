@@ -1,0 +1,32 @@
+name: Daily Loop Closer
+
+on:
+  schedule:
+    # Runs every day at 2am UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # allows manual triggering
+
+jobs:
+  run-loop-closer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install supabase pandas numpy
+
+      - name: Run loop_closer
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          python loop_closer.py

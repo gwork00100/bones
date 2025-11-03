@@ -1,0 +1,35 @@
+name: Run Loop Closer
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  run-loop-closer:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install supabase numpy
+
+      - name: Install Ollama
+        run: brew install ollama
+
+      - name: Start Ollama server
+        run: |
+          nohup /opt/homebrew/opt/ollama/bin/ollama serve &
+          sleep 5
+
+      - name: Run loop_closer.py
+        run: python3 loop_closer.py

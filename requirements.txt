@@ -1,0 +1,6 @@
+supabase
+numpy
+requests
+python-dotenv
+openai
+pandas

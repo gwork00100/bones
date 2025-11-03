@@ -1,0 +1,41 @@
+name: Auto Loop Closer
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0,30 * * * *'  # every 30 minutes
+  workflow_dispatch:  # manual trigger
+
+jobs:
+  run-loop-closer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Debug environment
+        run: |
+          python --version
+          pip list
+          echo "Files in repo:"
+          ls -la
+
+      - name: Run Loop Closer
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}  # only if your script uses Ollama API
+        run: python loop_closer.py
