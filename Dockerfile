@@ -1,19 +1,14 @@
-# Use Python slim base image
-FROM python:3.12-slim
+# Use full Python 3.12 image (not slim)
+FROM python:3.12
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies for building Python packages
-RUN apt-get update && \
-    apt-get install -y gcc libffi-dev python3.12-venv python3-pip && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy all project files
+# Copy project files
 COPY . .
 
-# Install Python dependencies
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Command to run Bones
+# Command to run your app
 CMD ["python", "main.py"]
