@@ -1,8 +1,7 @@
 # Web / API
 fastapi==0.111.1
 uvicorn[standard]==0.22.0
-httpx>=1.0.0,<2.0.0
-
+httpx==0.28.1
 requests==2.32.5
 python-dotenv==1.2.1
 
