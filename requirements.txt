@@ -1,14 +1,61 @@
-# Core libraries
-supabase
-numpy
-requests
-python-dotenv
-openai
-pandas
-tweepy
-pycoingecko
-uvicorn[standard]
+# Web / API
+fastapi==0.111.1
+uvicorn[standard]==0.22.0
+httpx==1.8.6
+requests==2.32.5
+python-dotenv==1.2.1
 
-# Redis async support
-redis
-aioredis
+# Data handling
+pandas==2.3.3
+numpy==2.3.4
+pyyaml==6.0.3
+python-dateutil==2.9.0.post0
+pytz==2025.2
+strenum==0.4.15
+
+# Redis / queue
+redis==7.0.1
+aioredis==2.0.1
+watchfiles==1.1.1
+
+# Twitter / API clients
+tweepy==4.16.0
+oauthlib==3.3.1
+requests-oauthlib==2.0.0
+
+# Supabase / Postgres
+supabase==2.23.2
+supabase-auth==2.23.2
+supabase-functions==2.23.2
+postgrest==2.23.2
+storage3==2.23.2
+
+# Crypto / finance
+pycoingecko==3.2.0
+realtime==2.23.2
+
+# Async & networking
+anyio==4.11.0
+async-timeout==5.0.1
+websockets==15.0.1
+uvloop==0.22.1
+yarl==1.22.0
+multidict==6.7.0
+httptools==0.7.1
+h11==0.16.0
+h2==4.3.0
+hyperframe==6.1.0
+typing-inspection==0.4.2
+typing-extensions==4.15.0
+propcache==0.4.1
+sniffio==1.3.1
+deprecation==2.1.0
+click==8.3.0
+charset-normalizer==3.4.4
+certifi==2025.10.5
+idna==3.11
+packaging==25.0
+cffi==2.0.0
+cryptography==46.0.3
+distro==1.9.0
+six==1.17.0
