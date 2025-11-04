@@ -7,8 +7,9 @@ WORKDIR /app
 # Copy only the requirements first (caching benefit)
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Upgrade pip and install Python dependencies
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the project files
 COPY . .
@@ -17,5 +18,9 @@ COPY . .
 ENV PORT=10000
 EXPOSE $PORT
 
-# Command to run your app
+# Set environment variables for Redis and other secrets if needed
+# ENV UPSTASH_URL=<your-url>
+# ENV UPSTASH_TOKEN=<your-token>
+
+# Run the main app
 CMD ["python", "main.py"]

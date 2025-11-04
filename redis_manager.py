@@ -2,7 +2,7 @@
 import os
 import json
 import asyncio
-from aioredis import Redis, from_url
+from redis.asyncio import Redis
 
 # -------------------------
 # Redis connection
@@ -14,7 +14,7 @@ r: Redis = None  # Will initialize in async function
 
 async def init_redis():
     global r
-    r = from_url(
+    r = Redis.from_url(
         UPSTASH_URL,
         decode_responses=True,
         username="default",
