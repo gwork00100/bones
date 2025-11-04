@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 bones/main.py
-Autonomous Data Collector with Redis queue integration, heartbeat logging, and retries.
+Autonomous Data Collector with Redis queue integration, heartbeat logging, retries,
+and optional FastAPI endpoint for Render deployment.
 """
 
 import os
@@ -11,6 +12,7 @@ import traceback
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 import requests
+import asyncio
 
 # ------------------------------
 # Load environment and config
@@ -63,9 +65,21 @@ def push_to_blood(data, endpoint):
     retry(_push, max_attempts=3, delay=5)
 
 # ------------------------------
+# Async versions for queues
+# ------------------------------
+async def async_add_to_queue(queue_name, item):
+    await add_to_queue(queue_name, item)
+
+async def async_pop_from_queue(queue_name):
+    return await pop_from_queue(queue_name)
+
+async def async_cleanup():
+    await cleanup()
+
+# ------------------------------
 # Seed content if empty
 # ------------------------------
-def seed_content_if_empty():
+async def seed_content_if_empty():
     try:
         resp = supabase.table("content_performance").select("*").limit(1).execute()
         if not resp.data:
@@ -90,25 +104,25 @@ def build_prompt(keyword, source, weights):
 # ------------------------------
 # Retry queued content
 # ------------------------------
-def retry_queued_content():
+async def retry_queued_content():
     while True:
-        item = pop_from_queue("content_queue")
+        item = await async_pop_from_queue("content_queue")
         if not item:
             break
         try:
             retry(generate_content, 3, 5, item["prompt"])
             log_heartbeat("success", f"Processed queued content for '{item['keyword']}'")
         except Exception as e:
-            add_to_queue("content_queue", item)
+            await async_add_to_queue("content_queue", item)
             log_heartbeat("error", f"Retry failed for queued content '{item['keyword']}': {e}")
 
 # ------------------------------
 # Main fetch & push cycle
 # ------------------------------
-def run_cycle():
+async def run_cycle():
     try:
-        seed_content_if_empty()
-        cleanup()
+        await seed_content_if_empty()
+        await async_cleanup()
 
         # Fetch trending keywords
         keywords = get_trending_coins()[:3] + ["bitcoin", "zk rollup"]
@@ -157,11 +171,11 @@ def run_cycle():
             # Adaptive prompt & queue
             selected_source = random.choices(sources, weights=[weights_dict.get(s, 1.0) for s in sources], k=1)[0]
             prompt = build_prompt(kw, selected_source, weights_dict)
-            add_to_queue("content_queue", {"keyword": kw, "prompt": prompt})
+            await async_add_to_queue("content_queue", {"keyword": kw, "prompt": prompt})
             log_heartbeat("info", f"Queued content prompt for '{kw}'")
 
         # Retry queued content
-        retry_queued_content()
+        await retry_queued_content()
 
         log_heartbeat("success", "Cycle completed successfully.")
     except Exception as e:
@@ -171,24 +185,37 @@ def run_cycle():
 # ------------------------------
 # Continuous loop
 # ------------------------------
-def main_loop():
+async def main_loop():
     print(f"🦴 bones autonomous collector started (interval: {FETCH_INTERVAL}s)")
     while True:
         start_time = datetime.now(timezone.utc).isoformat()
         log_heartbeat("info", f"Starting cycle at {start_time}")
-        run_cycle()
+        await run_cycle()
         log_heartbeat("info", f"Cycle completed. Sleeping for {FETCH_INTERVAL} seconds.")
-        time.sleep(FETCH_INTERVAL)
+        await asyncio.sleep(FETCH_INTERVAL)
+
+# ------------------------------
+# FastAPI server for Render port detection
+# ------------------------------
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/status")
+async def status():
+    return {"ok": True, "message": "Bones is running"}
 
 # ------------------------------
 # Entrypoint
 # ------------------------------
 if __name__ == "__main__":
-    try:
-        main_loop()
-    except KeyboardInterrupt:
-        log_heartbeat("info", "bones manually stopped via KeyboardInterrupt.")
-    except Exception as e:
-        tb = traceback.format_exc()
-        log_heartbeat("fatal", f"bones crashed unexpectedly: {e}\n{tb}")
-        raise
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+
+    loop = asyncio.get_event_loop()
+
+    # Schedule autonomous collector in background
+    loop.create_task(main_loop())
+
+    # Run FastAPI server (blocks)
+    uvicorn.run(app, host="0.0.0.0", port=port)
